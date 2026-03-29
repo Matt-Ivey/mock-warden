@@ -1,0 +1,17 @@
+# Gradle
+.gradle/
+build/
+gradle-app.setting
+
+# IntelliJ Platform plugin cache
+.intellijPlatform/
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# OS
+.DS_Store

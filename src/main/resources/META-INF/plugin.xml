@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<idea-plugin>
+    <id>com.github.matt.intellij.plugin</id>
+    <name>MockWarden</name>
+    <depends>com.intellij.modules.java</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <localInspection
+                language="JAVA"
+                shortName="MockParameterMissingAnnotation"
+                displayName="@Test parameter missing @Mock"
+                groupPath="Java"
+                groupName="MockWarden"
+                enabledByDefault="true"
+                level="WARNING"
+                implementationClass="com.github.matt.intellij.plugin.inspections.MockParameterInspection"/>
+    </extensions>
+</idea-plugin>
