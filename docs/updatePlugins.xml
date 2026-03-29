@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugins>
+  <plugin id="com.github.matt.intellij.plugin"
+          url="https://github.com/Matt-Ivey/mock-warden/releases/download/v1.0.0/MockWarden-1.0.0.zip"
+          version="1.0.0"/>
+</plugins>

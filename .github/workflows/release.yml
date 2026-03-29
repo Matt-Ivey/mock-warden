@@ -1,0 +1,61 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main   # check out main so we can push the XML update back
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'jetbrains'
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ hashFiles('**/*.gradle.kts', 'gradle.properties') }}
+          restore-keys: gradle-
+
+      - name: Get version
+        id: ver
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Build plugin
+        run: ./gradlew buildPlugin
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/distributions/MockWarden-${{ steps.ver.outputs.VERSION }}.zip
+
+      - name: Update updatePlugins.xml
+        run: |
+          VERSION=${{ steps.ver.outputs.VERSION }}
+          cat > docs/updatePlugins.xml <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <plugins>
+            <plugin id="com.github.matt.intellij.plugin"
+                    url="https://github.com/Matt-Ivey/mock-warden/releases/download/v${VERSION}/MockWarden-${VERSION}.zip"
+                    version="${VERSION}"/>
+          </plugins>
+          EOF
+
+      - name: Commit updated updatePlugins.xml
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/updatePlugins.xml
+          git commit -m "chore: update updatePlugins.xml for v${{ steps.ver.outputs.VERSION }}"
+          git push origin HEAD:main
